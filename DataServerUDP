@@ -1,0 +1,45 @@
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Date;
+
+
+public class DateServerUDP {
+
+	private static int PORT = 9091;
+	
+	public static void main(String[] args) throws IOException{
+		//Socket UDP
+		DatagramSocket serverSocket = new DatagramSocket(PORT);
+		System.out.println("Servidor está escuchando en el puerto"+
+		PORT+"usando una conexión UDP");
+		
+		try{
+		
+		while(true){//Bucle infinito
+			//Recibir paquete
+			//recibo el paquete que me están enviando
+			byte bufferReceive[] = new byte[128];
+			//Voy a armar el paquete que recibo, dando el tamaño
+			DatagramPacket receivePacket = new DatagramPacket(bufferReceive, bufferReceive.length);
+			//Voy a recibir lo que llega
+			serverSocket.receive(receivePacket);
+				
+			
+			InetAddress clientAddress = receivePacket.getAddress();
+			int clientPort = receivePacket.getPort();
+			
+			//Enviar paquete de respuesta (RESPONSE)
+			byte bufferSend[] = "SERVIDOR HUGO".getBytes();
+			//byte bufferSend[] = new Date().toString().getBytes();
+			DatagramPacket sendPacket = new DatagramPacket(bufferSend,bufferSend.length, clientAddress,clientPort );
+			serverSocket.send(sendPacket);
+		}}
+		finally{
+			serverSocket.close();
+		}
+		
+		}
+	}
