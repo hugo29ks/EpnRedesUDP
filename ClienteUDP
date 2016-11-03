@@ -1,0 +1,54 @@
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+
+
+import javax.swing.JOptionPane;
+
+public class DateClientUDP {
+
+	private static int SERVER_PORT = 9091;
+	
+	public static void main(String[] args) throws IOException{
+		
+	String serverAddress= JOptionPane.showInputDialog("Ingrese la dirección IP de la máquina que /n"+
+	"està corriendo el servicio en el puerto"+ SERVER_PORT);
+		//UDP en Java SOCKETS
+		
+		//DatagramSocket --> UDP en Java
+		DatagramSocket ClientSocket = new DatagramSocket();
+	    byte bufferSend[] = serverAddress.getBytes();
+	    //Para enviar un paquete
+		DatagramPacket sendPacket = new DatagramPacket(bufferSend, bufferSend.length, 
+				InetAddress.getByName(serverAddress), SERVER_PORT);
+			
+		ClientSocket.send(sendPacket);
+		
+		//Recibir el paquete
+		//buffer de bytes para recibir lo que va a enviar el servidor
+		byte bufferReceive[] = new byte[128];
+		DatagramPacket receivePacket = new DatagramPacket(bufferReceive, bufferReceive.length);
+		//La capa de transporte nos entregue el pedido/paquete
+		ClientSocket.receive(receivePacket);
+		
+		//Transformamos los bytes a String
+		InputStream myInputStream = new ByteArrayInputStream(receivePacket.getData());
+		BufferedReader input = new BufferedReader(new InputStreamReader(myInputStream));
+		String answer = input.readLine();
+		
+		//Desplegar mensaje
+		JOptionPane.showMessageDialog(null, answer);
+		ClientSocket.close();
+		System.exit(0);
+	}
+	
+}
